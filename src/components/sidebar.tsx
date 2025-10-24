@@ -10,6 +10,7 @@ const Sidebar = () => {
     { name: "Dashboard", path: "/dashboard" },
     { name: "Người dùng", path: "/users" },
     { name: "Câu hỏi", path: "/questions" },
+    { name: "Câu trả lời", path: "/answers" },
     { name: "Bài viết", path: "/posts" },
     { name: "Lĩnh vực", path: "/fields" },
   ];
