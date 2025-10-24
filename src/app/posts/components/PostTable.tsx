@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { postsApi, Post } from "@/app/api/posts/posts.api";
 import PostDetail from "./PostDetail";
 import PostsChart from "./PostChart";
@@ -9,6 +9,7 @@ export default function PostTable() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedYear, setSelectedYear] = useState<number | "all">("all"); // ✅ Thêm state năm
 
   const loadPosts = async () => {
     setLoading(true);
@@ -36,17 +37,35 @@ export default function PostTable() {
     }
   };
 
+  // ✅ Lọc danh sách bài đăng theo năm
+  const filteredPosts = useMemo(() => {
+    if (selectedYear === "all") return posts;
+    return posts.filter(
+      (p) => new Date(p.createdAt).getFullYear() === selectedYear
+    );
+  }, [posts, selectedYear]);
+
   return (
     <div className="relative w-full">
       <h2 className="text-2xl font-semibold mb-4">Danh sách bài đăng</h2>
+
+      {/* ✅ Biểu đồ có thể chọn năm, ảnh hưởng đến bảng */}
       <div className="mb-6">
-        <PostsChart posts={posts} />
+        <PostsChart
+          posts={posts}
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+        />
       </div>
 
       {loading ? (
         <p className="text-gray-500">Đang tải...</p>
-      ) : posts.length === 0 ? (
-        <p className="text-gray-500 text-center">Không có bài đăng nào.</p>
+      ) : filteredPosts.length === 0 ? (
+        <p className="text-gray-500 text-center">
+          {selectedYear === "all"
+            ? "Không có bài đăng nào."
+            : `Không có bài đăng nào trong năm ${selectedYear}.`}
+        </p>
       ) : (
         <table className="w-full border border-gray-200 rounded-lg overflow-hidden shadow-sm">
           <thead className="bg-gray-100 text-left">
@@ -58,7 +77,7 @@ export default function PostTable() {
             </tr>
           </thead>
           <tbody>
-            {posts.map((p) => (
+            {filteredPosts.map((p) => (
               <tr key={p._id} className="border-t hover:bg-gray-50">
                 <td className="p-3">{p.title}</td>
                 <td className="p-3">{p.user?.username || "-"}</td>
@@ -85,7 +104,6 @@ export default function PostTable() {
         </table>
       )}
 
-      {/* Modal chi tiết */}
       {selectedPost && (
         <PostDetail
           post={selectedPost}

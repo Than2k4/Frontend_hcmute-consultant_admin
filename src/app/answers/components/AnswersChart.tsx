@@ -1,31 +1,31 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { Post } from "@/app/api/posts/posts.api";
+import { Answer } from "@/app/api/answers/answers.api";
 import {
   BarChart,
   Bar,
   XAxis,
   YAxis,
+  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  CartesianGrid,
 } from "recharts";
 
 interface Props {
-  posts: Post[];
+  answers: Answer[];
   selectedYear: number | "all";
   setSelectedYear: (year: number | "all") => void;
 }
 
-export default function PostsChart({
-  posts,
+export default function AnswersChart({
+  answers,
   selectedYear,
   setSelectedYear,
 }: Props) {
   const currentYear = new Date().getFullYear();
 
-  // ✅ Danh sách năm: năm hiện tại và 10 năm trước đó
+  // ✅ Danh sách năm: năm hiện tại và 10 năm trước
   const years = useMemo(() => {
     const list = [];
     for (let i = 0; i <= 10; i++) {
@@ -34,40 +34,32 @@ export default function PostsChart({
     return list;
   }, [currentYear]);
 
-  // ✅ Lọc bài đăng theo năm
-  const filteredPosts = useMemo(() => {
-    if (selectedYear === "all") return posts;
-    return posts.filter(
-      (p) => new Date(p.createdAt).getFullYear() === selectedYear
+  // ✅ Lọc câu trả lời theo năm được chọn
+  const filteredAnswers = useMemo(() => {
+    if (selectedYear === "all") return answers;
+    return answers.filter(
+      (a) => new Date(a.createdAt).getFullYear() === selectedYear
     );
-  }, [posts, selectedYear]);
+  }, [answers, selectedYear]);
 
-  // ✅ Gom nhóm bài đăng theo tháng
-  const chartData = useMemo(() => {
+  // ✅ Dữ liệu thống kê theo tháng
+  const data = useMemo(() => {
     const months = Array.from({ length: 12 }, (_, i) => ({
-      month: i + 1,
-      total: 0,
+      name: `T${i + 1}`,
+      count: 0,
     }));
-
-    filteredPosts.forEach((p) => {
-      if (p.createdAt) {
-        const month = new Date(p.createdAt).getMonth(); // 0-11
-        months[month].total += 1;
-      }
+    filteredAnswers.forEach((a) => {
+      const month = new Date(a.createdAt).getMonth();
+      months[month].count++;
     });
-
-    return months.map((m) => ({
-      name: `T${m.month}`,
-      "Số bài": m.total,
-    }));
-  }, [filteredPosts]);
+    return months;
+  }, [filteredAnswers]);
 
   return (
     <div className="bg-white shadow rounded-md p-4 text-gray-600">
       <div className="flex justify-between items-center mb-3">
-        <h3 className="font-semibold">Thống kê bài đăng theo tháng</h3>
+        <h3 className="font-semibold">Thống kê câu trả lời theo tháng</h3>
 
-        {/* ✅ Bộ lọc năm */}
         <div className="flex items-center gap-2">
           <label htmlFor="year" className="text-sm">
             Năm:
@@ -92,21 +84,22 @@ export default function PostsChart({
         </div>
       </div>
 
-      <p className="mb-4 text-sm">
-        Tổng số bài đăng: {filteredPosts.length}
+      <p className="text-sm mb-4">
+        Tổng số câu trả lời: {filteredAnswers.length}
       </p>
 
-      <div className="h-72 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-            <XAxis dataKey="name" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Bar dataKey="Số bài" fill="#60a5fa" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart
+          data={data}
+          margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis allowDecimals={false} />
+          <Tooltip />
+          <Bar dataKey="count" fill="#60a5fa" radius={[4, 4, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }
