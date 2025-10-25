@@ -12,7 +12,7 @@ const Sidebar = () => {
     { name: "Câu hỏi", path: "/questions" },
     { name: "Câu trả lời", path: "/answers" },
     { name: "Bài viết", path: "/posts" },
-    { name: "Lĩnh vực", path: "/fields" },
+    { name: "Lĩnh vực", path: "/departments" },
   ];
 
   return (

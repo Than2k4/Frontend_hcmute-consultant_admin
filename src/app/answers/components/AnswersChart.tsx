@@ -48,12 +48,22 @@ export default function AnswersChart({
       name: `T${i + 1}`,
       count: 0,
     }));
+
     filteredAnswers.forEach((a) => {
-      const month = new Date(a.createdAt).getMonth();
-      months[month].count++;
+      if (!a?.createdAt) return; // ❗Bỏ qua nếu không có createdAt
+
+      const date = new Date(a.createdAt);
+      if (isNaN(date.getTime())) return; // ❗Bỏ qua nếu không hợp lệ
+
+      const month = date.getMonth();
+      if (month >= 0 && month < 12) {
+        months[month].count++;
+      }
     });
+
     return months;
   }, [filteredAnswers]);
+
 
   return (
     <div className="bg-white shadow rounded-md p-4 text-gray-600">
