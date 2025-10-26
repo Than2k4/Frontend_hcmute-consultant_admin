@@ -46,13 +46,33 @@ export default function QuestionChart({ data }: { data: any }) {
         <h3 className="font-medium mb-2">🏆 Top lĩnh vực nhiều câu hỏi</h3>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={topFields}>
+            <defs>
+              <linearGradient id="colorGreen" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
+                <stop offset="100%" stopColor="#34d399" stopOpacity={0.5} />
+              </linearGradient>
+            </defs>
+
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            <XAxis
+              dataKey="name"
+              interval={0}
+              tick={{ fontSize: 12 }}
+              angle={-15}
+              textAnchor="end"
+              padding={{ left: 40, right: 40 }}
+              height={60}
+            />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="total" fill="#10b981" />
+            <Bar
+              dataKey="total"
+              fill="url(#colorGreen)"
+              radius={[8, 8, 0, 0]} // 👈 Bo tròn góc trên
+            />
           </BarChart>
         </ResponsiveContainer>
+
       </div>
     </div>
   );
