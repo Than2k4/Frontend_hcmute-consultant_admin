@@ -12,7 +12,6 @@ Một hệ thống **quản lý tư vấn sinh viên** được phát triển d�
 - [Tech Stack](#-tech-stack)
 - [Installation Guide](#️-installation-guide)
 - [Usage](#-usage)
-- [Author](#-author)
 
 ---
 
