@@ -1,18 +1,7 @@
 # 🎓 HCMUTE Consultant Admin Dashboard
 
-License: MIT  
-Build Status: ✅ Stable  
-Stars: ⭐⭐⭐⭐  
-
 Một hệ thống **quản lý tư vấn sinh viên** được phát triển dành riêng cho Trường Đại học Sư phạm Kỹ thuật TP.HCM (HCMUTE).  
 Ứng dụng cung cấp nền tảng giúp **quản trị viên, tư vấn viên và người dùng** tương tác, đặt câu hỏi, trả lời, và theo dõi thống kê học thuật.
-
----
-
-## 🖼️ Project Banner
-*(Ví dụ: thêm ảnh minh họa UI vào thư mục `public/banner.png`)*
-
-![HCMUTE Dashboard](./public/banner.png)
 
 ---
 
