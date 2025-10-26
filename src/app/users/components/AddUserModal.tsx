@@ -62,8 +62,6 @@ export default function AddUserModal({ onClose, onSuccess }: Props) {
       .finally(() => setLoading(false));
   };
 
-
-
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">

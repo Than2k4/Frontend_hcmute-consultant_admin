@@ -1,25 +1,45 @@
 import axiosClient from "../../../lib/axiosClient";
 
+export interface Department {
+  _id: string;
+  name: string;
+}
+
 export interface User {
   _id: string;
+  fullName?: string;
   name?: string;
   firstName?: string;
   lastName?: string;
   email?: string;
   role?: string;
+  department?: Department | string; // có thể là ObjectId hoặc object đã populate
   createdAt?: string;
   updatedAt?: string;
 }
+
 
 export const usersApi = {
   // 🧩 Lấy tất cả user
   getAll: async (): Promise<User[]> => {
     const res = await axiosClient.get("/users");
     const raw = res.data?.data ?? [];
+
     return raw.map((u: any) => {
       const nameFromParts = `${(u.firstName ?? "").trim()} ${(u.lastName ?? "").trim()}`.trim();
       const name = u.name ?? (nameFromParts === "" ? undefined : nameFromParts);
-      return { ...u, name };
+      const fullName = u.fullName ?? nameFromParts;
+
+      let department = u.department;
+      // ✅ Nếu department là object => chỉ lấy _id và name
+      if (department && typeof department === "object") {
+        department = {
+          _id: department._id,
+          name: department.name ?? "",
+        };
+      }
+
+      return { ...u, name, fullName, department };
     });
   },
 
@@ -30,7 +50,17 @@ export const usersApi = {
     if (!u) return null;
     const nameFromParts = `${(u.firstName ?? "").trim()} ${(u.lastName ?? "").trim()}`.trim();
     const name = u.name ?? (nameFromParts === "" ? undefined : nameFromParts);
-    return { ...u, name };
+    const fullname = u.fullName ?? nameFromParts;
+     let department = u.department;
+      // ✅ Nếu department là object => chỉ lấy _id và name
+      if (department && typeof department === "object") {
+        department = {
+          _id: department._id,
+          name: department.name ?? "",
+        };
+      }
+
+      return { ...u, name, fullname, department };
   },
 
   // 🧩 Xóa user

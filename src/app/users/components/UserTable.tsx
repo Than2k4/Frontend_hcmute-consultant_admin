@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { User, usersApi } from "../../api/users/users.api";
+import { Department, departmentsApi } from "../../api/departments/departments.api";
 import UserDetail from "./UserDetail";
 import AddUserModal from "./AddUserModal";
 
@@ -13,7 +14,27 @@ interface Props {
 export default function UserTable({ users, onRefresh }: Props) {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState<boolean>(false);
-  const [showAdd, setShowAdd] = useState(false); // ✅ state điều khiển modal
+  const [showAdd, setShowAdd] = useState(false);
+  const [departments, setDepartments] = useState<Department[]>([]); // ✅ thêm state lưu danh sách khoa
+
+  // 🧩 Lấy danh sách khoa 1 lần khi load
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await departmentsApi.getAll();
+        setDepartments(data);
+      } catch (err) {
+        console.error("Không thể tải danh sách khoa:", err);
+      }
+    })();
+  }, []);
+
+  // ✅ Hàm lấy tên khoa từ ID
+  const getDepartmentName = (id?: string) => {
+    if (!id) return "—";
+    const d = departments.find((dep) => dep._id === id);
+    return d ? d.name : "—";
+  };
 
   const handleView = async (id: string) => {
     setLoadingUser(true);
@@ -60,15 +81,21 @@ export default function UserTable({ users, onRefresh }: Props) {
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-500">Tên</th>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-500">Email</th>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-500">Vai trò</th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-500">Khoa</th>
               <th className="px-4 py-2 text-right text-sm font-medium text-gray-500">Hành động</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {users.map((u) => (
               <tr key={u._id}>
-                <td className="px-4 py-3 text-sm text-gray-700">{u.name ?? "—"}</td>
+                <td className="px-4 py-3 text-sm text-gray-700">{u.fullName ?? "—"}</td>
                 <td className="px-4 py-3 text-sm text-gray-700">{u.email ?? "—"}</td>
                 <td className="px-4 py-3 text-sm text-gray-700">{u.role ?? "—"}</td>
+                <td className="px-4 py-3 text-sm text-gray-700">
+                  {typeof u.department === "object"
+                    ? u.department.name
+                    : getDepartmentName(u.department)}
+                </td>
                 <td className="px-4 py-3 text-sm text-gray-700 text-right space-x-2">
                   <button
                     onClick={() => handleView(u._id)}
@@ -86,6 +113,7 @@ export default function UserTable({ users, onRefresh }: Props) {
               </tr>
             ))}
           </tbody>
+
         </table>
       </div>
 
@@ -98,7 +126,8 @@ export default function UserTable({ users, onRefresh }: Props) {
             setSelectedUser(null);
             onRefresh();
           }}
-          loading={loadingUser}
+            loading={loadingUser}
+            departments={departments} 
         />
       )}
 
