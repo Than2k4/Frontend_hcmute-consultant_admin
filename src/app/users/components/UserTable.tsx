@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { User, usersApi } from "../../api/users/users.api";
 import UserDetail from "./UserDetail";
+import AddUserModal from "./AddUserModal";
 
 interface Props {
   users: User[];
@@ -12,6 +13,7 @@ interface Props {
 export default function UserTable({ users, onRefresh }: Props) {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState<boolean>(false);
+  const [showAdd, setShowAdd] = useState(false); // ✅ state điều khiển modal
 
   const handleView = async (id: string) => {
     setLoadingUser(true);
@@ -39,6 +41,18 @@ export default function UserTable({ users, onRefresh }: Props) {
 
   return (
     <>
+      {/* ✅ Thanh tiêu đề + nút thêm */}
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-lg font-semibold text-gray-700">Danh sách người dùng</h2>
+        <button
+          onClick={() => setShowAdd(true)}
+          className="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+        >
+          ➕ Thêm tư vấn viên
+        </button>
+      </div>
+
+      {/* ✅ Bảng danh sách */}
       <div className="bg-white rounded-md shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -75,6 +89,7 @@ export default function UserTable({ users, onRefresh }: Props) {
         </table>
       </div>
 
+      {/* ✅ Modal chi tiết user */}
       {selectedUser && (
         <UserDetail
           user={selectedUser}
@@ -84,6 +99,17 @@ export default function UserTable({ users, onRefresh }: Props) {
             onRefresh();
           }}
           loading={loadingUser}
+        />
+      )}
+
+      {/* ✅ Modal thêm user */}
+      {showAdd && (
+        <AddUserModal
+          onClose={() => setShowAdd(false)}
+          onSuccess={() => {
+            setShowAdd(false);
+            onRefresh();
+          }}
         />
       )}
     </>

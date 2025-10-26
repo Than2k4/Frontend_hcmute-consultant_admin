@@ -8,7 +8,6 @@ export default function OverviewCards({ data }: { data: any }) {
 
   const items = [
     { label: "👥 Tổng User", value: data.totalUsers ?? 0 },
-    { label: "👨‍💼 Trưởng ban tư vấn", value: data.totalLeaders ?? 0 },
     { label: "🧑‍💻 Tư vấn viên", value: data.totalConsultants ?? 0 },
     { label: "❓ Câu hỏi", value: data.totalQuestions ?? 0 },
     { label: "💬 Câu trả lời", value: data.totalAnswers ?? 0 },

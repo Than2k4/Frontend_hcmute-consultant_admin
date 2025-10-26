@@ -15,12 +15,16 @@ axiosClient.interceptors.request.use((config) => {
   return config;
 });
 
+// Chặn log lỗi 400–499 khỏi console (chỉ log lỗi server hoặc network)
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error.response || error.message);
+    if (error.response?.status >= 500 || !error.response) {
+      console.error("API Error:", error);
+    }
     return Promise.reject(error);
   }
 );
+
 
 export default axiosClient;
